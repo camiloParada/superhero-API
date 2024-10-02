@@ -1,8 +1,7 @@
-import { registerAs } from '@nestjs/config';
+import { registerAs } from "@nestjs/config";
 
 export default registerAs('config', () => {
   return {
-    apiToken: process.env.SUPERHERO_API_TOKEN,
     database: {
       host: process.env.TYPEORM_HOST,
       dbName: process.env.TYPEORM_DATABASE,
@@ -12,6 +11,16 @@ export default registerAs('config', () => {
       entities: process.env.TYPEORM_ENTITIES,
       migrations: process.env.TYPEORM_MIGRATIONS,
       migrationsDir: process.env.TYPEORM_MIGRATIONS_DIR,
+    },
+    activationHash: {
+      expirationTime: process.env.HASH_EXPIRATION_MINUTES,
+    },
+    jwt: {
+      secret: process.env.JWT_SECRET,
+      expiresIn: process.env.JWT_EXPIRES_IN,
+      passLength: process.env.PASSWORD_LENGTH,
+      strategyUsernameField: process.env.JWT_STRATEGY_USERNAME_FIELD,
+      strategyPasswordField: process.env.JWT_STRATEGY_PASSWORD_FIELD,
     },
     seeder: {
       userEncryptedPassword: process.env.USER_SEED_PASSWORD,

@@ -2,10 +2,19 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 
 import { AppService } from './app.service';
+import { SuperheroesService } from './api/superheroes/services/superheroes.service';
 
 @Controller('api/superhero')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly superheroesService: SuperheroesService,
+  ) {}
+
+  @MessagePattern({ cmd: 'getSuperheroes' })
+  getSuperheroes() {
+    return this.superheroesService.findAll();
+  }
 
   @MessagePattern({ cmd: 'getSuperhero' })
   getSuperhero(data: { id: number }) {

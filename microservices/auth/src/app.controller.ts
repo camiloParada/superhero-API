@@ -1,19 +1,32 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, HttpException, HttpStatus } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 
-import { AppService } from './app.service';
+import { AuthService } from './api/auth/services/auth.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private authService: AuthService) {}
 
   @MessagePattern({ cmd: 'login' })
-  login() {
-    return 'Login successful!';
-  }
+  async login(data: { payload: { email: string; password: string } }) {
+    const email = data.payload.email;
+    const password = data.payload.password;
+    const user = await this.authService.validateUser(email, password);
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+    if (!user) {
+      return {
+        error: HttpStatus.UNAUTHORIZED,
+        message: 'Access denied',
+      };
+    }
+  
+    const result = this.authService.generateJwt(user);
+
+    delete user.passwords;
+
+    return {
+      access_token: (await result).access_token,
+      user,
+    };
   }
 }
