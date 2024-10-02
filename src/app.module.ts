@@ -1,32 +1,31 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import * as proxy from 'http-proxy-middleware';
+import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
-  imports: [],
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'SUPERHERO_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3001,
+        },
+      },
+      {
+        name: 'AUTH_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3002,
+        },
+      },
+    ]),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(
-        proxy.createProxyMiddleware({
-          target: 'http://localhost:3002',
-          changeOrigin: true,
-        }),
-      )
-      .forRoutes('/auth');
-
-    consumer
-      .apply(
-        proxy.createProxyMiddleware({
-          target: 'http://localhost:3001',
-          changeOrigin: true,
-        }),
-      )
-      .forRoutes('/api/superhero');
-  }
-}
+export class AppModule {}
