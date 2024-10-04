@@ -28,6 +28,8 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.4.4",
     "axios": "^1.7.7",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "consul": "^1.2.0",
     "http-proxy-middleware": "^3.0.2",
     "passport": "^0.7.0",
